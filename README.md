@@ -1,4 +1,4 @@
-# SpikeGLX_Tools
+# SGLXMetaToCoords
 SpikeGLX metadata readers
 
 Code to read SpikeGLX metadata for a given binary, and create a geometry map for spike sorting or other analysis.
