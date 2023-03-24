@@ -1,13 +1,13 @@
 % =========================================================
 % Write out coordinates for a Neuropixels metadata file.
-% If there is an snsGeomMap, that will be used. If not, and the probe is
-% supported, the geometry will be derived from the snsShankMap.
-% outType = 3 will make a copy of the metadata file with the snsGeomMap
+% If there is an ~snsGeomMap, that will be used. If not, and the probe is
+% supported, the geometry will be derived from the ~snsShankMap.
+% outType = 3 will make a copy of the metadata file with the ~snsGeomMap
 % appended.
 %
 % If you get a 'Probe not supported error', open your data in the
 % SpikeGLX viewer (version 20230202 or later); and export a very short
-% segment; the snsGeomMap will be appended to the metadata file created for
+% segment; the ~snsGeomMap will be appended to the metadata file created for
 % the exported file. You can then use this script to make a KS channel map.
 % 
 % Format selected with the outType variable
