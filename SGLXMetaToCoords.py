@@ -13,7 +13,8 @@ The output is set by the outType parameter:
                   0 for text coordinate file; 
                   1 for Kilosort or Kilosort2 channel map file;
                   2 for strings to paste into JRClust .prm file 
-                
+                  3 create a new metadata file with snsGeomMap appended (for converting old metadata to new)
+                  4 npy file with (nchan,2) matrix of xy coordinates, e.g. for YASS and related sorters                
 
 
 @author: Jennifer Colonell, Janelia Research Campus
@@ -28,7 +29,7 @@ from tkinter import Tk
 from tkinter import filedialog
 import shutil
 
-
+# =========================================================
 # Parse ini file returning a dictionary whose keys are the metadata
 # left-hand-side-tags, and values are string versions of the right-hand-side
 # metadata values. We remove any leading '~' characters in the tags to match
@@ -56,7 +57,8 @@ def readMeta(metaPath):
         
     return(metaDict)
     
-   
+
+# =========================================================
 # Return counts of each imec channel type that composes the timepoints
 # stored in the binary files.
 #
@@ -309,6 +311,10 @@ def plotSaved(xCoord, yCoord, shankInd, meta):
     return
 
 
+# =========================================================
+# CoordsTo... functions to write output in different 
+# formats
+#
 def CoordsToText(meta, chans, xCoord, yCoord, connected, shankInd, shankSep, baseName, savePath, buildPath ):
 
     if buildPath:
@@ -439,6 +445,7 @@ def CoordsToGeomMap(meta, chans, xCoord, yCoord, connected, shankInd, shankSep, 
         outFile.write(snsGeomStr)
 
 
+# =========================================================
 # Given a path to a SpikeGLX metadata file, write out coordinates
 # in formats for analysis software to consume
 # Input params:
@@ -446,7 +453,7 @@ def CoordsToGeomMap(meta, chans, xCoord, yCoord, connected, shankInd, shankSep, 
 #   outType:  format for the output
 #   badChan:  channels other than reference channels to exclude
 #   destFullPath: 
-    
+#  
 def MetaToCoords(metaFullPath, outType, badChan= np.zeros((0), dtype = 'int'), destFullPath = '', showPlot=False):
        
     # Read in metadata; returns a dictionary with string for values
@@ -493,7 +500,9 @@ def MetaToCoords(metaFullPath, outType, badChan= np.zeros((0), dtype = 'int'), d
         writeFunc(meta, chans, xCoord, yCoord, connected, shankInd, shankPitch, baseName, savePath, buildPath )
     
     return xCoord, yCoord, shankInd
-    
+
+
+# =========================================================    
 # Sample calling program to get a metadata file from the user,
 # output a file set by outType
 #   0 = tab delimited text file of coordinates in um, index, x, y, shank index

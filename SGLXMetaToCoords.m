@@ -141,6 +141,7 @@ function [meta] = ReadMeta(metaName, path)
     end
 end % ReadMeta
 
+
 % =========================================================
 % Return counts of each imec channel type that compose
 % the timepoints stored in binary file.
@@ -200,6 +201,7 @@ function snsGeomStr = snsGeom(meta, shankInd, xCoord, yCoord, use, nShank, shank
     end
 end % snsGeom
 
+
 % =========================================================
 % Parse snsGeomMap for XY coordinates
 %
@@ -220,6 +222,7 @@ function [nShank, shankWidth, shankPitch, shankInd, xCoord, yCoord, connected] =
     shankWidth = str2double(headParts{4});
     shankPitch = str2double(headParts{3});
 end % geomMapToGeom
+
 
 % =========================================================
 % Get XY coordinates from snsShankMap plus hard coded geom values
@@ -255,6 +258,7 @@ function [nShank, shankWidth, shankPitch, shankInd, xCoord, yCoord, connected] =
     shankWidth = geom.shankWidth;
     shankPitch = geom.shankPitch;
 end % shankMapToGeom
+
 
 % =========================================================
 % Return geometry paramters for supported probe types
