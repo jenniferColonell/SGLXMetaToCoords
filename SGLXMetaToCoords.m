@@ -493,6 +493,7 @@ M('NP1100') = 'uhd_8col_1bank';
 M('NP1110') = 'uhd_8col_16bank';
 
 M('PRB2_1_2_0640_0') = 'np2_ss';
+M('PRB2_1_4_0480_1') = 'np2_ss';
 M('NP2000') = 'np2_ss';
 M('NP2003') = 'np2_ss';
 M('NP2004') = 'np2_ss';

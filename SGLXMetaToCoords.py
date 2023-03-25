@@ -122,6 +122,7 @@ def getGeomParams(meta):
     ('NP1100',uhd_8col_1bank),
     ('NP1110',uhd_8col_16bank),
     
+    ('PRB2_1_4_0480_1',np2_ss),
     ('PRB2_1_2_0640_0',np2_ss),
     ('NP2000',np2_ss),
     ('NP2003',np2_ss),
@@ -177,7 +178,9 @@ def geomMapToGeom(meta):
     
     for i in range(nEntry):
         # get parameter list from this entry, skipping first header entry
-        currList = geomMap[i+1].split(sep=':')
+        currEntry = geomMap[i+1]
+        currEntry = currEntry[1:len(currEntry)]
+        currList = currEntry.split(sep=':')
         shankInd[i] = int(currList[0])
         xCoord[i] = float(currList[1])
         yCoord[i] = float(currList[2])
@@ -318,8 +321,25 @@ def CoordsToText(meta, chans, xCoord, yCoord, connected, shankInd, shankSep, bas
     with open(saveFullPath, 'w') as outFile:
         for i in range(0,chans.size):
             currX = shankInd[i]*shankSep + xCoord[i]
-            currLine = '{:d}\t{: .2f}\t{: .2f}\t{:d}\n'.format(i, currX, yCoord[i], shankInd[i])
+            currLine = '{:d}\t{:g}\t{:g}\t{:g}\n'.format(i, currX, yCoord[i], shankInd[i])
             outFile.write(currLine)
+
+
+def CoordsToNPY(meta, chans, xCoord, yCoord, connected, shankInd, shankSep, baseName, savePath, buildPath ):
+
+    if buildPath:
+        newName = baseName + '_siteCoords.npy'
+        saveFullPath = Path(savePath / newName)
+    else:
+        saveFullPath = savePath
+
+    # write an npy file of nChanx2 
+    nchan = xCoord.shape[0]
+    geom = np.zeros((nchan,2))
+    geom[:,0] = xCoord + shankInd*shankSep
+    geom[:,1] = yCoord
+    
+    np.save(saveFullPath, geom)
 
             
 def CoordsToJRCString(meta, chans, xCoord, yCoord, connected, shankInd, shankSep, baseName, savePath, buildPath ):
@@ -345,13 +365,13 @@ def CoordsToJRCString(meta, chans, xCoord, yCoord, connected, shankInd, shankSep
     xCoord = shankInd*shankSep + xCoord
     
     for i in range(0,chans.size-1):
-        shankStr = shankStr + '{:d},'.format(shankInd[i])   # convert to 1-based for MATLAB
-        coordStr = coordStr + '{:.1f},{:.1f};'.format(xCoord[i], yCoord[i])
+        shankStr = shankStr + '{:g},'.format(shankInd[i])   # convert to 1-based for MATLAB
+        coordStr = coordStr + '{:g},{:g};'.format(xCoord[i], yCoord[i])
         siteMapStr = siteMapStr + '{:d},'.format(siteMap[i])    # convert to 1-based for MATLAB
     
     # final entries
-    shankStr = shankStr + '{:d}];\n'.format(shankInd[nChan-1])
-    coordStr = coordStr + '{:.1f},{:.1f}];\n'.format(xCoord[nChan-1], yCoord[nChan-1])
+    shankStr = shankStr + '{:g}];\n'.format(shankInd[nChan-1])
+    coordStr = coordStr + '{:g},{:g}];\n'.format(xCoord[nChan-1], yCoord[nChan-1])
     siteMapStr = siteMapStr + '{:d}];\n'.format(siteMap[nChan-1])
     
     with open(saveFullPath, 'w') as outFile:
@@ -453,7 +473,7 @@ def MetaToCoords(metaFullPath, outType, badChan= np.zeros((0), dtype = 'int'), d
 
     baseName = metaFullPath.stem
     
-    if outType > 0:
+    if outType >= 0:
         if len(destFullPath) == 0:
             savePath = metaFullPath.parent
             buildPath = True
@@ -464,7 +484,8 @@ def MetaToCoords(metaFullPath, outType, badChan= np.zeros((0), dtype = 'int'), d
                 0: CoordsToText,
                 1: CoordsToKSChanMap,
                 2: CoordsToJRCString,
-                3: CoordsToGeomMap
+                3: CoordsToGeomMap,
+                4: CoordsToNPY
         }
         
         writeFunc = outputSwitch.get(outType)
@@ -477,11 +498,13 @@ def MetaToCoords(metaFullPath, outType, badChan= np.zeros((0), dtype = 'int'), d
 #   0 = tab delimited text file of coordinates in um, index, x, y, shank index
 #   1 = KS2 chan map .mat file
 #   2 = strings of channel map, shank index, and x,y pairs for JRClust
+#   3 = create a new metadata file with snsGeomMap appended (for converting old metadata to new)
+#   4 = npy file with (nchan,2) matrix of xy coordinates, e.g. for YASS and related sorters
 # file is saved to the same path as the metadata file.
 #
 def main():
     
-    outType = 3
+    outType = 1
     
     # Get file from user
     root = Tk()         # create the Tkinter widget
