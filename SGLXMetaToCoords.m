@@ -177,7 +177,7 @@ function plotSaved(xCoord, yCoord, shankInd, meta)
     yall = rowInd*g.vertPitch;
     
     figure('Name','shank view','Units','Normalized', 'Position', [0.2,0.1,0.3,0.8])
-    for sI = 0:3
+    for sI = 0:g.nShank-1
         cc = find(shankInd == sI);
         scatter( g.shankPitch*sI + xall, yall, 3, 'k', 'square' ); hold on;
         scatter( g.shankPitch*sI + xCoord(cc), yCoord(cc), 30, 'green', 'square', 'filled' ); hold on; 
@@ -195,10 +195,10 @@ function snsGeomStr = snsGeom(meta, shankInd, xCoord, yCoord, use, nShank, shank
     % header
     snsGeomStr = sprintf('~snsGeomMap=(%s,%d,%d,%d)', meta.imDatPrb_pn, nShank, shankSep, shankWidth);
     for i = 1:numel(shankInd)
-        currEntry = sprintf('(%d:%d:%d:%d)', shankInd(i),xCoord(i),yCoord(i),use(i));
+        currEntry = sprintf('(%d:%g:%g:%d)', shankInd(i),xCoord(i),yCoord(i),use(i));
         snsGeomStr = sprintf('%s%s',snsGeomStr,currEntry);
     end
-end % snsGeomStr
+end % snsGeom
 
 % =========================================================
 % Parse snsGeomMap for XY coordinates
@@ -258,8 +258,8 @@ end % shankMapToGeom
 
 % =========================================================
 % Return geometry paramters for supported probe types
-% Note that geom only contains enough info to calculate
-% positions for the electrodes listed in snsShankMap
+% These are used to calculate positions from metadata
+% that includes only ~snsShankMap
 %
 function geom = getGeomParams(meta)
 % create map
@@ -428,7 +428,7 @@ switch geomType
         geom.odd_xOff = 11;
         geom.horzPitch = 48;
         geom.vertPitch = 20;
-        geom.rowsPerShank = 192;
+        geom.rowsPerShank = 480;
         geom.elecPerShank = 960;
     case 'NP1200'
         geom.nShank = 1;
