@@ -129,6 +129,7 @@ def getGeomParams(meta):
     ('NP2004',np2_ss),
     
     ('PRB2_4_2_0640_0',np2_4s),
+    ('PRB2_4_4_0480_1',np2_4s),
     ('NP2010',np2_4s),
     ('NP2013',np2_4s),
     ('NP2014',np2_4s),
