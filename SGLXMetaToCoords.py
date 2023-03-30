@@ -258,7 +258,7 @@ def imroMetaItems(meta):
 
     # read header to get what type of imro this is
     headEntry = imroTbl[0]
-    headEntry = headEntry[1:len(headEntry)]   #remove leading ')'
+    headEntry = headEntry[1:len(headEntry)]   #remove leading '('
     headList = headEntry.split(sep=',')
     currType = headList[0]
     
@@ -274,7 +274,7 @@ def imroMetaItems(meta):
     elif currType == '0':
         # parse first entry of the table for lf and apgain
         currEntry = imroTbl[1]
-        currEntry = currEntry[1:len(currEntry)]   #remove leading '())'
+        currEntry = currEntry[1:len(currEntry)]   #remove leading '('
         currList = currEntry.split(sep=' ')
         imChan0apGainStr = 'imChan0apGain=' + currList[3]
         imChan0lfGainStr = 'imChan0lfGain=' + currList[4]
