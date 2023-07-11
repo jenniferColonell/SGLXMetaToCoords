@@ -338,8 +338,8 @@ def geomMapToGeom(meta):
     # parse header for number of shanks
     currList = geomMap[0].split(',')
     nShank = int(currList[1]);
-    shankWidth = float(currList[2]);
-    shankPitch = float(currList[3]);
+    shankPitch = float(currList[2]);
+    shankWidth = float(currList[3]);
     
     return nShank, shankWidth, shankPitch, shankInd, xCoord, yCoord, connected
 
@@ -643,6 +643,7 @@ def MetaToCoords(metaFullPath, outType, badChan= np.zeros((0), dtype = 'int'), d
     connected[badChan] = 0    
 
     baseName = metaFullPath.stem
+    NchanTOT = meta['nSavedChans']
     
     if outType >= 0:
         if len(destFullPath) == 0:
@@ -662,7 +663,7 @@ def MetaToCoords(metaFullPath, outType, badChan= np.zeros((0), dtype = 'int'), d
         writeFunc = outputSwitch.get(outType)
         writeFunc(meta, chans, xCoord, yCoord, connected, shankInd, shankPitch, baseName, savePath, buildPath )
     
-    return xCoord, yCoord, shankInd
+    return xCoord, yCoord, shankInd, connected, NchanTOT
 
 
 # =========================================================    

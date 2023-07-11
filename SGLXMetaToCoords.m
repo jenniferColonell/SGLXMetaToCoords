@@ -22,16 +22,27 @@
 %
 % Jennifer Colonell, Janelia Research Campus
  
-function SGLXMetaToCoords()
+function SGLXMetaToCoords(varargin)
 
 % Output selection:
-outType = 3;
+outType = 0;
+bProcLF = 1; % only used with outType 3; append new fields to matching lf meta
 
-% Plot shank view
-bPlot = 1;
-
-% Ask user for metadata file
-[metaName,path] = uigetfile('*.meta', 'Select Metadata File');
+if (length(varargin) == 0)
+    % Ask user for metadata file
+    [metaName,path] = uigetfile('*.meta', 'Select AP Metadata File');
+    % Plot shank view
+    bPlot = 1;
+else
+    % calling from another script
+    inputCell = varargin(1);
+    metaFullPath = inputCell{1};   % full path to the input res file
+    [path, tempName, ext] = fileparts(metaFullPath);
+    metaName = sprintf('%s%s', tempName, ext);
+    inputCell = varargin(2);
+    bProcLF = inputCell{1};  % append new fields to matching lf meta?
+    bPlot = 0;
+end
 
 % Parse input file to get the metadata structure
 meta = ReadMeta(metaName, path);
@@ -120,6 +131,24 @@ switch outType
         fprintf(fid,'%s\n',muxTableStr);
         fprintf(fid,'%s\n',snsGeomStr);
         fclose(fid);
+        
+        if bProcLF
+            lf_fname = sprintf('%s.lf', extractBefore(fname,'.ap'));
+            lf_metaName = sprintf('%s.meta',lf_fname);
+            if isfile(fullfile(path,lf_metaName))
+                newName = [lf_fname,'_orig.meta'];
+                movefile(fullfile(path,lf_metaName), fullfile(path,newName));
+                copyfile(fullfile(path,newName), fullfile(path,lf_metaName));
+                % add items to the metadata file
+                fid = fopen(fullfile(path,lf_metaName), 'a');
+                fprintf(fid,'%s\n',imChan0apGainStr);
+                fprintf(fid,'%s\n',imChan0lfGainStr);
+                fprintf(fid,'%s\n',imAnyChanFullBandStr);
+                fprintf(fid,'%s\n',muxTableStr);
+                fprintf(fid,'%s\n',snsGeomStr);
+                fclose(fid);
+            end
+        end
 end
 end % SGLXMetaToCoords
 
