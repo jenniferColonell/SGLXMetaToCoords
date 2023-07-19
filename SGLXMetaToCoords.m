@@ -26,7 +26,7 @@
 function out=SGLXMetaToCoords(varargin)
 
 % Output selection:
-outType = 4;
+outType = 0;
 bProcLF = 1; % only used with outType 3; append new fields to matching lf meta
 out=[];
 
