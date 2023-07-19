@@ -17,16 +17,18 @@
 %     2 for strings to paste into JRClust .prm file;
 %     3 adds muxTbl, snsGeomMap and other metadata items to existing file
 %       to be compatible with SpikeGLX 032623-phase 30 and newer
+%     4 returns the coordinates as a matlab struct and does not write files
 %
 % File is saved in current working directory 
 %
 % Jennifer Colonell, Janelia Research Campus
  
-function SGLXMetaToCoords(varargin)
+function out=SGLXMetaToCoords(varargin)
 
 % Output selection:
 outType = 0;
 bProcLF = 1; % only used with outType 3; append new fields to matching lf meta
+out=[];
 
 if (length(varargin) == 0)
     % Ask user for metadata file
@@ -63,7 +65,7 @@ end
 [~,fname,~] = fileparts(metaName);
 
 switch outType
-
+    
     case 0      %tab delimited, chan, x, y, shank
         newName = [fname,'-siteCoords.txt'];
         fid = fopen( newName, 'w');
@@ -149,6 +151,11 @@ switch outType
                 fclose(fid);
             end
         end
+        
+    case 4      %matlab struct
+        out = struct('nShank',nShank,'shankWidth',shankWidth,'shankPitch',shankPitch,...
+                     'shankInd',shankInd,'xCoord',xCoord,'yCoord',yCoord,'connected',connected);
+                 
 end
 end % SGLXMetaToCoords
 
